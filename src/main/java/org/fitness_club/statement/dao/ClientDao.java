@@ -26,8 +26,9 @@ public class ClientDao implements StatementDao<Client> {
     @Override
     public void insert(Client client) {
         try (Statement stmt = ConnectionManager.getConnection().createStatement()) {
-            stmt.executeUpdate("INSERT INTO clients (first_name, last_name, phone) " +
-                    "VALUES ('" + client.getFirstName() + "', '" + client.getLastName() + "', '" + client.getPhone() + "')");
+            stmt.executeUpdate("INSERT INTO clients (first_name, last_name, phone, email) " +
+                    "VALUES ('" + client.getFirstName() + "', '" + client.getLastName() +
+                    "', '" + client.getPhone() + "', '" + client.getEmail() + "')");
         } catch (SQLException e) {
             logger.severe("Ошибка: " + e.getMessage());
             throw new RuntimeException(e);
@@ -58,6 +59,9 @@ public class ClientDao implements StatementDao<Client> {
                 c.setFirstName(rs.getString("first_name"));
                 c.setLastName(rs.getString("last_name"));
                 c.setPhone(rs.getString("phone"));
+                c.setEmail(rs.getString("email"));
+                c.setRegistrationDate(rs.getDate("registration_date").toLocalDate());
+                c.setIsActive(rs.getBoolean("is_active"));
                 list.add(c);
             }
         } catch (SQLException e) {
@@ -86,7 +90,6 @@ public class ClientDao implements StatementDao<Client> {
         return client;
     }
 
-    // ЗАДАНИЕ 6: Обновить имя всех клиентов, посещающих тренировки определённого тренера
     public void updateClientsOfTrainer(long trainerId, String newFirstName) {
         try (Statement stmt = ConnectionManager.getConnection().createStatement()) {
             String sql = "UPDATE clients SET first_name = '" + newFirstName + "' WHERE id IN " +

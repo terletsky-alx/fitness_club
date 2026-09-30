@@ -26,8 +26,9 @@ public class TrainerDao implements StatementDao<Trainer> {
     @Override
     public void insert(Trainer trainer) {
         try (Statement stmt = ConnectionManager.getConnection().createStatement()) {
-            stmt.executeUpdate("INSERT INTO trainers (first_name, last_name, specialization) " +
-                    "VALUES ('" + trainer.getFirstName() + "', '" + trainer.getLastName() + "', '" + trainer.getSpecialization() + "')");
+            stmt.executeUpdate("INSERT INTO trainers (first_name, last_name, specialization, hourly_rate) " +
+                    "VALUES ('" + trainer.getFirstName() + "', '" + trainer.getLastName() +
+                    "', '" + trainer.getSpecialization() + "', " + trainer.getHourlyRate() + ")");
         } catch (SQLException e) {
             logger.severe("Ошибка: " + e.getMessage());
             throw new RuntimeException(e);
@@ -58,6 +59,19 @@ public class TrainerDao implements StatementDao<Trainer> {
                 t.setFirstName(rs.getString("first_name"));
                 t.setLastName(rs.getString("last_name"));
                 t.setSpecialization(rs.getString("specialization"));
+
+                java.sql.Date hireDateSql = rs.getDate("hire_date");
+                if (hireDateSql != null) {
+                    t.setHireDate(hireDateSql.toLocalDate());
+                }
+
+                double hourlyRate = rs.getDouble("hourly_rate");
+                if (!rs.wasNull()) {
+                    t.setHourlyRate(hourlyRate);
+                }
+
+                t.setIsActive(rs.getBoolean("is_active"));
+
                 list.add(t);
             }
         } catch (SQLException e) {
@@ -78,6 +92,18 @@ public class TrainerDao implements StatementDao<Trainer> {
                 trainer.setFirstName(rs.getString("first_name"));
                 trainer.setLastName(rs.getString("last_name"));
                 trainer.setSpecialization(rs.getString("specialization"));
+
+                java.sql.Date hireDateSql = rs.getDate("hire_date");
+                if (hireDateSql != null) {
+                    trainer.setHireDate(hireDateSql.toLocalDate());
+                }
+
+                double hourlyRate = rs.getDouble("hourly_rate");
+                if (!rs.wasNull()) {
+                    trainer.setHourlyRate(hourlyRate);
+                }
+
+                trainer.setIsActive(rs.getBoolean("is_active"));
             }
         } catch (SQLException e) {
             logger.severe("Ошибка: " + e.getMessage());
@@ -86,7 +112,6 @@ public class TrainerDao implements StatementDao<Trainer> {
         return trainer;
     }
 
-    // ЗАДАНИЕ 2: Сортировка тренеров по имени и фамилии
     public List<Trainer> getAllSortedByName() {
         List<Trainer> list = new ArrayList<>();
         try (Statement stmt = ConnectionManager.getConnection().createStatement();
@@ -97,6 +122,19 @@ public class TrainerDao implements StatementDao<Trainer> {
                 t.setFirstName(rs.getString("first_name"));
                 t.setLastName(rs.getString("last_name"));
                 t.setSpecialization(rs.getString("specialization"));
+
+                java.sql.Date hireDateSql = rs.getDate("hire_date");
+                if (hireDateSql != null) {
+                    t.setHireDate(hireDateSql.toLocalDate());
+                }
+
+                double hourlyRate = rs.getDouble("hourly_rate");
+                if (!rs.wasNull()) {
+                    t.setHourlyRate(hourlyRate);
+                }
+
+                t.setIsActive(rs.getBoolean("is_active"));
+
                 list.add(t);
             }
         } catch (SQLException e) {
@@ -106,17 +144,17 @@ public class TrainerDao implements StatementDao<Trainer> {
         return list;
     }
 
-    // ЗАДАНИЕ 7: Подсчёт тренировок у каждого тренера (с подзапросом)
     public void printTrainersWithWorkoutCount() {
         try (Statement stmt = ConnectionManager.getConnection().createStatement();
              ResultSet rs = stmt.executeQuery(
-                     "SELECT first_name, last_name, specialization, " +
+                     "SELECT first_name, last_name, specialization, hourly_rate, " +
                              "(SELECT COUNT(*) FROM workouts WHERE trainer_id = trainers.id) AS workout_count " +
                              "FROM trainers")) {
             System.out.println("\n[Количество тренировок у тренеров]");
             while (rs.next()) {
                 System.out.println(rs.getString("first_name") + " " + rs.getString("last_name") +
-                        " (" + rs.getString("specialization") + ") - тренировок: " +
+                        " (" + rs.getString("specialization") + ") - ставка: " +
+                        rs.getDouble("hourly_rate") + " BYN/час - тренировок: " +
                         rs.getInt("workout_count"));
             }
         } catch (SQLException e) {

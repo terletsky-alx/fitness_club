@@ -26,8 +26,9 @@ public class WorkoutDao implements StatementDao<Workout> {
     @Override
     public void insert(Workout w) {
         try (Statement stmt = ConnectionManager.getConnection().createStatement()) {
-            stmt.executeUpdate("INSERT INTO workouts (trainer_id, name, duration_minutes) " +
-                    "VALUES (" + w.getTrainerId() + ", '" + w.getName() + "', " + w.getDurationMinutes() + ")");
+            stmt.executeUpdate("INSERT INTO workouts (trainer_id, name, duration_minutes, difficulty, room_number) " +
+                    "VALUES (" + w.getTrainerId() + ", '" + w.getName() +
+                    "', " + w.getDurationMinutes() + ", '" + w.getDifficulty() + "', " + w.getRoomNumber() + ")");
         } catch (SQLException e) {
             logger.severe("Ошибка: " + e.getMessage());
             throw new RuntimeException(e);
@@ -86,7 +87,6 @@ public class WorkoutDao implements StatementDao<Workout> {
         return w;
     }
 
-    // ЗАДАНИЕ 3: Тренировки длительностью больше заданной, отсортированные по длительности
     public List<Workout> getLongerThan(int minutes) {
         List<Workout> list = new ArrayList<>();
         try (Statement stmt = ConnectionManager.getConnection().createStatement();
@@ -119,7 +119,6 @@ public class WorkoutDao implements StatementDao<Workout> {
         }
     }
 
-    // ЗАДАНИЕ 5: Тренировки, тренеры которых имеют фамилию на определённую букву
     public List<Workout> getByTrainerLastNameStartsWith(String letter) {
         List<Workout> list = new ArrayList<>();
         try (Statement stmt = ConnectionManager.getConnection().createStatement();

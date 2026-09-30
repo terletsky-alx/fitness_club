@@ -21,9 +21,13 @@ public class SubscriptionDao implements StatementDao<Subscription> {
     @Override
     public void insert(Subscription sub) {
         try (Statement stmt = ConnectionManager.getConnection().createStatement()) {
-            stmt.executeUpdate("INSERT INTO subscriptions (client_id, type, start_date, end_date) " +
-                    "VALUES (" + sub.getClientId() + ", '" + sub.getType() + "', '" + sub.getStartDate() + "', '" + sub.getEndDate() + "')");
-        } catch (SQLException e) { throw new RuntimeException(e); }
+            stmt.executeUpdate("INSERT INTO subscriptions (client_id, type, start_date, end_date, price) " +
+                    "VALUES (" + sub.getClientId() + ", '" + sub.getType() +
+                    "', '" + sub.getStartDate() + "', '" + sub.getEndDate() + "', " + sub.getPrice() + ")");
+        } catch (SQLException e) {
+            logger.severe("Ошибка: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

@@ -10,13 +10,18 @@ public class Subscription {
     private String type;
     private LocalDate startDate;
     private LocalDate endDate;
+    private Double price;          // ← новое поле
+    private Boolean isUsed;        // ← новое поле
 
     public Subscription() {}
 
-    public Subscription(Long clientId, String type, LocalDate startDate, LocalDate endDate) {
+    // НОВЫЙ конструктор с 5 параметрами (добавлен price)
+    public Subscription(Long clientId, String type, LocalDate startDate, LocalDate endDate, Double price) {
         this.clientId = clientId;
         this.type = type;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.price = price;
+        this.isUsed = false;
     }
 }

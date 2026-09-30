@@ -13,22 +13,22 @@ import java.util.logging.Logger;
 public class EquipmentDao {
     private static final Logger logger = Logger.getLogger(EquipmentDao.class.getName());
 
-    // Операция 1: Вставка нового оборудования
     public void insert(Equipment eq) {
-        String sql = "INSERT INTO equipment (name, type, manufacturer, purchase_year) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO equipment (name, type, manufacturer, purchase_year, purchase_price) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement pStmt = ConnectionManager.getConnection().prepareStatement(sql)) {
             pStmt.setString(1, eq.getName());
             pStmt.setString(2, eq.getType());
             pStmt.setString(3, eq.getManufacturer());
             pStmt.setInt(4, eq.getPurchaseYear());
+            pStmt.setDouble(5, eq.getPurchasePrice());
             pStmt.executeUpdate();
         } catch (SQLException e) {
-            logger.severe("Ошибка при вставке оборудования: " + e.getMessage());
+            logger.severe("Ошибка: " + e.getMessage());
             throw new RuntimeException(e);
         }
     }
 
-    // Операция 2: Получить всё оборудование
+
     public List<Equipment> getAll() {
         List<Equipment> list = new ArrayList<>();
         String sql = "SELECT * FROM equipment";
@@ -44,7 +44,6 @@ public class EquipmentDao {
         return list;
     }
 
-    // Операция 3: Найти оборудование по типу
     public List<Equipment> getByType(String type) {
         List<Equipment> list = new ArrayList<>();
         String sql = "SELECT * FROM equipment WHERE type LIKE ?";
@@ -61,7 +60,6 @@ public class EquipmentDao {
         return list;
     }
 
-    // Операция 4: Удалить оборудование по id
     public void delete(Long id) {
         String sql = "DELETE FROM equipment WHERE id = ?";
         try (PreparedStatement pStmt = ConnectionManager.getConnection().prepareStatement(sql)) {
@@ -73,7 +71,7 @@ public class EquipmentDao {
         }
     }
 
-    // Вспомогательный метод: преобразует ResultSet в объект Equipment
+
     private Equipment mapEquipment(ResultSet rs) throws SQLException {
         Equipment eq = new Equipment();
         eq.setId(rs.getLong("id"));

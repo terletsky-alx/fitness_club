@@ -4,7 +4,6 @@ import org.fitness_club.connection.ConnectionManager;
 import org.fitness_club.statement.dao.*;
 import org.fitness_club.statement.model.*;
 import org.fitness_club.utils.InputManager;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +18,6 @@ public class StatementAction {
     WorkoutDao workoutDao = new WorkoutDao();
     ClientWorkoutDao clientWorkoutDao = new ClientWorkoutDao();
 
-    // ========== УДАЛЕНИЕ ВСЕЙ ИНФОРМАЦИИ ==========
     public void deleteAllInfo() {
         System.out.print("Подтвердите удаление всей информации (y / Y): ");
         final String choice = InputManager.getNextLine();
@@ -79,45 +77,44 @@ public class StatementAction {
         }
     }
 
-    // ========== ПРОСМОТР ВСЕЙ ИНФОРМАЦИИ (7 ЗАДАНИЙ) ==========
     public void getAllInfo() {
         try {
-            // --- ЗАДАНИЕ 1: Выборка по всем таблицам ---
-            System.out.println("\n========== ЗАДАНИЕ 1: Все таблицы ==========");
+            // Выборка по всем таблицам
+            System.out.println("\nЗАДАНИЕ 1: Все таблицы ");
             printList("[Клиенты]", clientDao.getAll());
             printList("[Тренеры]", trainerDao.getAll());
             printList("[Абонементы]", subscriptionDao.getAll());
             printList("[Тренировки]", workoutDao.getAll());
             printList("[Связи клиент-тренировка]", clientWorkoutDao.getAll());
 
-            // --- ЗАДАНИЕ 2: Сортировка тренеров по имени и фамилии ---
-            System.out.println("\n========== ЗАДАНИЕ 2: Тренеры по алфавиту ==========");
+            //Сортировка тренеров по имени и фамилии
+            System.out.println("\nЗАДАНИЕ 2: Тренеры по алфавиту");
             trainerDao.getAllSortedByName().forEach(System.out::println);
 
-            // --- ЗАДАНИЕ 3: Тренировки длительностью > 60 минут, отсортированные ---
-            System.out.println("\n========== ЗАДАНИЕ 3: Тренировки > 60 минут ==========");
+            //Тренировки длительностью > 60 минут, отсортированные
+            System.out.println("\nТренировки > 60 минут");
             workoutDao.getLongerThan(60).forEach(System.out::println);
 
-            // --- ЗАДАНИЕ 4: Обновить название случайной тренировки у тренера с id=1 ---
-            System.out.println("\n========== ЗАДАНИЕ 4: Обновление тренировки ==========");
+            //Обновить название случайной тренировки у тренера с id=1
+            System.out.println("\nОбновление тренировки");
             workoutDao.updateRandomWorkoutNameOfTrainer(1L, "Обновлённая тренировка");
             System.out.println("После обновления:");
             workoutDao.getAll().forEach(System.out::println);
 
-            // --- ЗАДАНИЕ 5: Тренировки тренеров с фамилией на букву "И" ---
-            System.out.println("\n========== ЗАДАНИЕ 5: Тренировки тренеров на 'И' ==========");
+            // Тренировки тренеров с фамилией на букву "И"
+            System.out.println("\nЗАДАНИЕ 5: Тренировки тренеров на 'И'");
             workoutDao.getByTrainerLastNameStartsWith("И").forEach(System.out::println);
 
-            // --- ЗАДАНИЕ 6: Обновить имя клиентов, посещающих тренировки тренера с id=2 ---
-            System.out.println("\n========== ЗАДАНИЕ 6: Обновление клиентов тренера id=2 ==========");
+            //Обновить имя клиентов, посещающих тренировки тренера с id=2
+            System.out.println("\nЗАДАНИЕ 6: Обновление клиентов тренера id=2");
             System.out.println("До обновления:");
             clientDao.getAll().forEach(System.out::println);
             clientDao.updateClientsOfTrainer(2L, "ОбновлённоеИмя");
             System.out.println("После обновления:");
             clientDao.getAll().forEach(System.out::println);
 
-            // --- ЗАДАНИЕ 7: Количество тренировок у каждого тренера (подзапрос) ---
-            System.out.println("\n========== ЗАДАНИЕ 7: Подсчёт тренировок ==========");
+            //Количество тренировок у каждого тренера (подзапрос)
+            System.out.println("\nЗАДАНИЕ 7: Подсчёт тренировок");
             trainerDao.printTrainersWithWorkoutCount();
 
         } catch (RuntimeException e) {
@@ -134,59 +131,56 @@ public class StatementAction {
         }
     }
 
-    // ========== ДЕФОЛТНЫЕ ДАННЫЕ ==========
+
     private List<Client> getDefaultClients() {
         List<Client> list = new ArrayList<>();
-        list.add(new Client("Иван", "Петров", "+375291111111"));
-        list.add(new Client("Анна", "Сидорова", "+375292222222"));
-        list.add(new Client("Олег", "Иванов", "+375293333333"));
-        list.add(new Client("Мария", "Козлова", "+375294444444"));
+        list.add(new Client("Иван", "Петров", "+375291111111", "ivan@mail.com"));
+        list.add(new Client("Анна", "Сидорова", "+375292222222", "anna@mail.com"));
+        list.add(new Client("Олег", "Иванов", "+375293333333", "oleg@mail.com"));
+        list.add(new Client("Мария", "Козлова", "+375294444444", "maria@mail.com"));
         return list;
     }
 
     private List<Trainer> getDefaultTrainers() {
         List<Trainer> list = new ArrayList<>();
-        list.add(new Trainer("Алексей", "Смирнов", "Силовые тренировки"));
-        list.add(new Trainer("Елена", "Иванова", "Йога"));
-        list.add(new Trainer("Дмитрий", "Попов", "Кроссфит"));
+        list.add(new Trainer("Алексей", "Смирнов", "Силовые тренировки", 50.00));  // ← 4 параметра
+        list.add(new Trainer("Елена", "Иванова", "Йога", 45.00));                  // ← 4 параметра
+        list.add(new Trainer("Дмитрий", "Попов", "Кроссфит", 55.00));              // ← 4 параметра
         return list;
     }
 
     private List<Subscription> getDefaultSubscriptions(List<Client> clients) {
         List<Subscription> list = new ArrayList<>();
         list.add(new Subscription(clients.get(0).getId(), "Годовой",
-                LocalDate.of(2026, 1, 15), LocalDate.of(2027, 1, 15)));
+                LocalDate.of(2026, 1, 15), LocalDate.of(2027, 1, 15), 1200.00));
         list.add(new Subscription(clients.get(1).getId(), "Месячный",
-                LocalDate.of(2026, 9, 1), LocalDate.of(2026, 10, 1)));
+                LocalDate.of(2026, 9, 1), LocalDate.of(2026, 10, 1), 150.00));
         list.add(new Subscription(clients.get(2).getId(), "Полугодовой",
-                LocalDate.of(2026, 5, 10), LocalDate.of(2026, 11, 10)));
+                LocalDate.of(2026, 5, 10), LocalDate.of(2026, 11, 10), 600.00));
         return list;
     }
 
     private List<Workout> getDefaultWorkouts(List<Trainer> trainers) {
         List<Workout> list = new ArrayList<>();
-        // Тренер 1 (Смирнов) - силовые
-        list.add(new Workout(trainers.get(0).getId(), "Жим лёжа", 45));
-        list.add(new Workout(trainers.get(0).getId(), "Приседания со штангой", 60));
-        list.add(new Workout(trainers.get(0).getId(), "Становая тяга", 90));
-        // Тренер 2 (Иванова) - йога
-        list.add(new Workout(trainers.get(1).getId(), "Хатха-йога", 75));
-        list.add(new Workout(trainers.get(1).getId(), "Виньяса", 60));
-        // Тренер 3 (Попов) - кроссфит
-        list.add(new Workout(trainers.get(2).getId(), "WOD интенсив", 50));
-        list.add(new Workout(trainers.get(2).getId(), "Кардио-круг", 40));
+        list.add(new Workout(trainers.get(0).getId(), "Жим лёжа", 45, "Средний", 1));
+        list.add(new Workout(trainers.get(0).getId(), "Приседания со штангой", 60, "Продвинутый", 1));
+        list.add(new Workout(trainers.get(0).getId(), "Становая тяга", 90, "Продвинутый", 2));
+        list.add(new Workout(trainers.get(1).getId(), "Хатха-йога", 75, "Начальный", 3));
+        list.add(new Workout(trainers.get(1).getId(), "Виньяса", 60, "Средний", 3));
+        list.add(new Workout(trainers.get(2).getId(), "WOD интенсив", 50, "Продвинутый", 4));
+        list.add(new Workout(trainers.get(2).getId(), "Кардио-круг", 40, "Начальный", 4));
         return list;
     }
 
     private List<ClientWorkout> getDefaultClientWorkouts(List<Client> clients, List<Workout> workouts) {
         List<ClientWorkout> list = new ArrayList<>();
-        // Клиент 0 (Петров) - на силовые Смирнова
+
         list.add(new ClientWorkout(clients.get(0).getId(), workouts.get(0).getId()));
         list.add(new ClientWorkout(clients.get(0).getId(), workouts.get(1).getId()));
-        // Клиент 1 (Сидорова) - на йогу Ивановой
+
         list.add(new ClientWorkout(clients.get(1).getId(), workouts.get(3).getId()));
         list.add(new ClientWorkout(clients.get(1).getId(), workouts.get(4).getId()));
-        // Клиент 2 (Иванов) - на кроссфит Попова
+
         list.add(new ClientWorkout(clients.get(2).getId(), workouts.get(5).getId()));
         list.add(new ClientWorkout(clients.get(2).getId(), workouts.get(6).getId()));
         return list;
